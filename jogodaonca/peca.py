@@ -1,9 +1,7 @@
-import pygame
-from .constantes import VERMELHO, AZUL, TAMANHO_POSICAO, PRETO, onca, cachorro
 
-class Peca:
-    PADDING = 10
-    BORDA = 2
+from .constantes import TAMANHO_POSICAO, onca, cachorro
+
+class Peca():
 
     def __init__(self, linha, coluna, tipo):
         self.linha = linha
@@ -19,18 +17,6 @@ class Peca:
         # tamanho de cada posição * a linha + metade do tamanho da posição pra ser posicionado no meio
         self.x = TAMANHO_POSICAO * self.coluna + TAMANHO_POSICAO // 2
         self.y = TAMANHO_POSICAO * self.linha + TAMANHO_POSICAO // 2
-
-    def draw(self, janela):
-        raio = TAMANHO_POSICAO//2 - self.PADDING
-
-        # desenhar circulo com raio acima + tamanho da borda, depois desenhar circulo menor dentro deste maior
-        # para desenhar uma peça com borda
-        #pygame.draw.circle(win, PRETO, (self.x + 45, self.y + 150), raio + self.BORDA)
-        #pygame.draw.circle(win, self.cor, (self.x + 45, self.y + 150), raio)
-        if self.tipo == "onca":
-            janela.blit(onca, [self.x + 20, self.y + 120])
-        elif self.tipo == "cachorro":
-            janela.blit(cachorro, [self.x + 20, self.y + 120])
 
     def mover(self, linha, coluna):
         self.linha = linha
