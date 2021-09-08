@@ -26,7 +26,7 @@ class Jogo:
         self._init()
 
 
-    def eventos(self):
+    def click(self):
         jogo_em_execucao = True
         clock = pygame.time.Clock()
         FPS = 60

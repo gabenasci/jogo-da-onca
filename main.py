@@ -9,6 +9,6 @@ def main():
     jogo = Jogo()
 
         # verificar se ocorreu evento
-    jogo.eventos()
+    jogo.click()
 main()
 
