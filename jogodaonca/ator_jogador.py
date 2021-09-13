@@ -1,9 +1,10 @@
 import pygame
 
 from .constantes import PRETO, LINHAS, COLUNAS, TAMANHO_POSICAO, LARGURA, ALTURA, titulo, madeira, fundo, posicoes, \
-    iniciar, finalizar, onca, cachorro
+    iniciar, finalizar, onca, cachorro, placar
 from .peca import Peca
 from .tabuleiro import Tabuleiro
+from .tipo_jogador import TipoJogador
 
 #JANELA = pygame.display.set_mode((LARGURA, ALTURA))
 #pygame.display.set_caption('Jogo da Onça')
@@ -16,7 +17,7 @@ class AtorJogador:
         self.janela = pygame.display.set_mode((LARGURA, ALTURA))
         pygame.display.set_caption('Jogo da Onça')
         self.mensagem = ""
-        self.placar = 0
+
 
     def desenhar_tela(self):
         # desenhar imagem nas coordenadas especificadas da tela
@@ -25,6 +26,7 @@ class AtorJogador:
         self.janela.blit(madeira, [20, 110])
         self.janela.blit(iniciar, [-80, 620])
         self.janela.blit(finalizar, [300, 620])
+        self.janela.blit(placar, [380, 300])
 
         pos = 0
         for linha in range(LINHAS):
@@ -39,34 +41,41 @@ class AtorJogador:
         self.janela.blit(mensagem_imagem, [50, 565])
 
     def posicionar_pecas(self):
+        self.tabuleiro.posicionar_pecas_inicio()
+        '''
         for linha in range(LINHAS):
             self.tabuleiro.casas.append([])
             for coluna in range(COLUNAS):
                 if linha < 2:
-                    self.tabuleiro.casas[linha].append(Peca(linha, coluna, 'cachorro'))
+                    self.tabuleiro.casas[linha].append(Peca('cachorro'))
                 elif linha == 2 and coluna == 2:
-                    self.tabuleiro.casas[linha].append(Peca(linha, coluna, 'onca'))
+                    self.tabuleiro.casas[linha].append(Peca('onca'))
                 elif linha >= 2 and linha < 3 and coluna != 2:
-                    self.tabuleiro.casas[linha].append(Peca(linha, coluna, 'cachorro'))
+                    self.tabuleiro.casas[linha].append(Peca('cachorro'))
                 else:
                     self.tabuleiro.casas[linha].append(0)
-
+        '''
     def desenhar_pecas(self):
         self.desenhar_tela()
         for linha in range(LINHAS):
             for coluna in range(COLUNAS):
-                peca = self.tabuleiro.casas[linha][coluna]
+                peca = self.tabuleiro._casas[linha][coluna]
                 if peca != 0:
                     self.desenhar_peca(self.janela, peca)
 
     def desenhar_peca(self, janela, peca):
-        if peca.tipo == 'onca':
+        if peca.jogador.tipo == TipoJogador.ONCA:
             janela.blit(onca, [peca.x + 15, peca.y + 120])
-        elif peca.tipo == 'cachorro':
+        elif peca.jogador.tipo == TipoJogador.CACHORRO:
             janela.blit(cachorro, [peca.x + 20, peca.y + 120])
+        else:
+            pass
 
-    def desenhar_placar(self, nro_cachorros):
-        self.placar = nro_cachorros
+    def desenhar_placar(self, cachorros_comidos):
+        y = 320
+        for placar in range(cachorros_comidos):
+            self.janela.blit(cachorro, [395, y])
+            y += 55
 
     def mover(self, peca, linha, coluna):
         self.tabuleiro.casas[peca.linha][peca.coluna], self.tabuleiro.casas[linha][coluna] = self.tabuleiro.casas[linha][coluna], self.tabuleiro.casas[peca.linha][peca.coluna]

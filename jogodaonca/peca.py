@@ -1,12 +1,13 @@
 
 from .constantes import TAMANHO_POSICAO, onca, cachorro
+from .jogador import Jogador
 
 class Peca():
 
-    def __init__(self, linha, coluna, tipo):
+    def __init__(self, linha, coluna, jogador):
         self.linha = linha
         self.coluna = coluna
-        self.tipo = tipo
+        self.jogador = jogador
 
         self.x = 0
         self.y = 0
@@ -24,4 +25,4 @@ class Peca():
         self.calc_pos()
 
     def __repr__(self):
-        return str(self.tipo)
+        return str(self.jogador.tipo)
