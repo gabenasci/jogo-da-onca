@@ -11,12 +11,60 @@ from .tipo_jogador import TipoJogador
 
 class AtorJogador:
 
-    def __init__(self):
+    def __init__(self, ref):
         self.tabuleiro = Tabuleiro()
+        from .jogo import Jogo
+        assert isinstance(ref, Jogo)
+        self.jogo = ref
         self.posicionar_pecas()
         self.janela = pygame.display.set_mode((LARGURA, ALTURA))
         pygame.display.set_caption('Jogo da Onça')
         self.mensagem = ""
+
+    def click(self):
+        jogo_em_execucao = True
+        clock = pygame.time.Clock()
+        FPS = 60
+        while jogo_em_execucao:
+            clock.tick(FPS)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    jogo_em_execucao = False
+
+                # evento de click botao esquerdo do mouse
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    pos = pygame.mouse.get_pos()
+                    x, y = pos
+                    #print(pos)
+
+                    print(self.tabuleiro.casas)
+
+                    # clique no botão iniciar partida
+                    if x > 28 and x < 191 and y > 620 and y < 699:
+                        self.jogo.iniciar()
+
+                    # clique no tabuleiro
+                    elif x > 45 and x < 345 and y > 150 and y < 570:
+                        if self.jogo.partida_em_andamento:
+                            linha, coluna = self.jogo.interface.get_linha_coluna_do_mouse(pos)
+                            self.jogo.selecionar_peca(linha, coluna)
+                            print(self.jogo.jogada)
+
+                        else:
+                            self.jogo.mensagem("Partida deve ser iniciada primeiro")
+
+                    # clique no botão finalizar partida enquanto partida em andamento
+                    elif x > 409 and x < 570 and y > 620 and y < 699 and self.jogo.partida_em_andamento == True:
+                        self.jogo.finalizar()
+
+            if self.jogo.partida_em_andamento:
+                self.jogo.posicionar_pecas()
+                self.jogo.atualizar_placar(self.jogo._validador.cachorros_comidos)
+                if self.jogo.verificar_vencedor():
+                    self.jogo.finalizar()
+            else:
+                self.jogo.desenhar_tela()
 
 
     def desenhar_tela(self):
@@ -34,11 +82,17 @@ class AtorJogador:
                 pos += 1
                 self.janela.blit(posicoes[pos], [45 + coluna * TAMANHO_POSICAO, 150 + linha * TAMANHO_POSICAO])
 
+    def atualizar_interface(self):
+        pygame.display.update()
+
     def desenhar_mensagem(self, mensagem):
         pygame.font.init()
         font = pygame.font.SysFont('Arial', 18, bold=True, italic=True)
         mensagem_imagem = font.render(mensagem, True, PRETO)
         self.janela.blit(mensagem_imagem, [50, 565])
+
+    def tempo_mensagem(self):
+        pygame.time.wait(1000)
 
     def posicionar_pecas(self):
         self.tabuleiro.posicionar_pecas_inicio()

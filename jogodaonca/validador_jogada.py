@@ -22,6 +22,7 @@ class ValidadorJogada:
         self.__cachorro_comido = False
         self.__vencedor = None
         self.__casa_intermediaria = []
+        self.__jogada_multipla = False
         self.__casa_onca = []
 
     def verificar_jogada(self, jogada: [], tabuleiro: Tabuleiro, cachorros_comidos: int):

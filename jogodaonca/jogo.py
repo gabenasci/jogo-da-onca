@@ -1,5 +1,3 @@
-import pygame
-
 from .ator_jogador import AtorJogador
 from .peca import Peca
 from .estados import Estados
@@ -9,100 +7,54 @@ from .validador_jogada import ValidadorJogada
 
 class Jogo:
     def __init__(self):
-        self._interface = AtorJogador()
+        self._interface = AtorJogador(self)
         self._init()
         #self.janela = janela
 
     def _init(self):
         self._peca_a_mover = None
         self._tabuleiro = self._interface.tabuleiro
-        self._jogadores = [Jogador('Jogador 1', 'onca'), Jogador('Jogador 2', 'cachorro')]
+        #self._jogadores = [Jogador('Jogador 1', 'onca'), Jogador('Jogador 2', 'cachorro')]
         self._estado = Estados.ESPERA_ONCA
         self._validador = ValidadorJogada()
         self._partida_em_andamento = False
-        self._numero_cachorros = 14
         self._turno = 'onca'
         self._jogada = []
         self._vencedor = None
         self._peca_selecionada = None
         self._existe_vencedor = False
-
+        self._mensagem = None
 
     def iniciar(self):
+        self.tabuleiro.posicionar_pecas_inicio()
+        self._interface.desenhar_pecas()
+        self._interface.atualizar_interface()
         self._partida_em_andamento = True
-        self.posicionar_pecas()
 
     def finalizar(self):
+        if not self.verificar_vencedor():
+            self.mensagem("Partida finalizada")
+        else:
+            self.mensagem("VENCEDOR: " + (str(self._vencedor).upper()))
         self._init()
-        self.tabuleiro.posicionar_pecas_inicio()
-
-    def click(self):
-        jogo_em_execucao = True
-        clock = pygame.time.Clock()
-        FPS = 60
-        while jogo_em_execucao:
-            clock.tick(FPS)
-
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    jogo_em_execucao = False
-
-                # evento de click botao esquerdo do mouse
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    pos = pygame.mouse.get_pos()
-                    x, y = pos
-                    #print(pos)
-
-                    print(self.tabuleiro.casas)
-
-                    # clique no botão iniciar partida
-                    if x > 28 and x < 191 and y > 620 and y < 699:
-                        self.iniciar()
-                        self.mensagem("Partida iniciada")
-
-                    # clique no tabuleiro
-                    elif x > 45 and x < 345 and y > 150 and y < 570:
-                        if self.partida_em_andamento:
-                            linha, coluna = self._interface.get_linha_coluna_do_mouse(pos)
-                            self.selecionar_peca(linha, coluna)
-                            print(self.jogada)
-                        else:
-                            self.mensagem("Partida deve ser iniciada primeiro")
-
-                    # clique no botão finalizar partida enquanto partida em andamento
-                    elif x > 409 and x < 570 and y > 620 and y < 699 and self.partida_em_andamento == True:
-                        if len(self.jogada) > 2 or len(self.jogada) == 0:
-                            self.finalizar()
-                            self.mensagem("Partida finalizada")
-                        else:
-                            self.mensagem("Finaliza o lance primeiro")
-
-            if self.partida_em_andamento:
-                self.posicionar_pecas()
-                self.atualizar_placar(self._validador.cachorros_comidos)
-                if self.verificar_vencedor():
-                    self.mensagem("Vencedor: " + str(self._vencedor))
-                    self.finalizar()
-            else:
-                self.desenhar_tela()
-
 
     def desenhar_tela(self):
         self._interface.desenhar_tela()
-        pygame.display.update()
+        self._interface.atualizar_interface()
 
     def atualizar_placar(self, cachorros_comidos):
         self._interface.desenhar_placar(cachorros_comidos)
-        pygame.display.update()
+        self._interface.atualizar_interface()
 
     def posicionar_pecas(self):
         self._interface.desenhar_pecas()
-        pygame.display.update()
+        self._interface.atualizar_interface()
 
     def mensagem(self, str):
+        self._mensagem = str
         self._interface.desenhar_mensagem(str)
-        pygame.display.update()
-        pygame.time.wait(1000)
+        self._interface.atualizar_interface()
+        self._interface.tempo_mensagem()
 
     def selecionar_peca(self, linha, coluna):
         peca_clicada = self._tabuleiro.get_peca(linha, coluna)
@@ -123,8 +75,10 @@ class Jogo:
                         self.mudar_estado(Estados.ESPERA_VAZIAC)
                 else:
                     self.mensagem("Turno errado")
-            if peca_clicada.jogador.tipo.value == 'vazia':
+            if peca_clicada.jogador.tipo.value == 'vazia' and not self._validador.jogada_multipla:
                 self.mensagem("Você deve clicar em uma peça")
+            if peca_clicada.jogador.tipo.value == 'vazia' and self._validador.jogada_multipla:
+                self.mensagem("Clique na onça novamente")
         elif estado == 2 or estado == 4:
             if peca_clicada.jogador.tipo.value == 'vazia':
                 self._jogada.append([linha, coluna])
@@ -132,17 +86,13 @@ class Jogo:
                 if jogada_valida is True:
                     self._mover(linha, coluna)
                     if self._validador.cachorro_foi_comido:
-                        l, c = [abs(int((self._jogada[1][0] + self._jogada[2][0]) / 2)),
-                                abs(int((self._jogada[1][1] + self._jogada[2][1]) / 2))]
-                        print(l, c)
-                        self.tabuleiro.casas[l][c].jogador = Jogador('', TipoJogador.VAZIA)
+                        self.remover_cachorro()
                     self._validador.verificar_vencedor()
                     vencedor = self._validador.vencedor
                     if not vencedor:
                         jogada_multipla = self.verificar_jogada_multipla()
                         print(self._turno)
                         if jogada_multipla:
-                            self.mensagem("JOGADA MULTIPLA")
                             self.mudar_estado(Estados.JOGADA_MULTIPLA)
                         elif self._turno == 'onca':
                             print("MUDANDO TURNO E ESTADO PARA CACHORRO")
@@ -157,6 +107,9 @@ class Jogo:
                 else:
                     self._jogada.pop()
                     self.mensagem("Jogada não é válida")
+            elif estado == 4 and peca_clicada.jogador.tipo.value == 'cachorro':
+                self.mudar_estado(Estados.ESPERA_CACHORRO)
+                self.selecionar_peca(linha, coluna)
             else:
                 self.mensagem("Jogada inválida")
         elif estado == 5:
@@ -169,6 +122,7 @@ class Jogo:
             elif peca_clicada.jogador.tipo.value == 'vazia':
                 self.mudar_estado(Estados.ESPERA_VAZIAO)
                 self.selecionar_peca(linha, coluna)
+
 
 
         '''
@@ -205,6 +159,12 @@ class Jogo:
         else:
             return False
         return True
+
+    def remover_cachorro(self):
+        l, c = [abs(int((self._jogada[1][0] + self._jogada[2][0]) / 2)),
+                abs(int((self._jogada[1][1] + self._jogada[2][1]) / 2))]
+        print(l, c)
+        self.tabuleiro.casas[l][c].jogador = Jogador('', TipoJogador.VAZIA)
 
     #TESTAR ESTADOS
     def mudar_estado(self, estado: Estados):
@@ -262,3 +222,7 @@ class Jogo:
 
     def __repr__(self):
         return str(self._jogadores)
+
+    @property
+    def interface(self):
+        return self._interface
