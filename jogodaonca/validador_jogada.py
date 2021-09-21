@@ -118,8 +118,7 @@ class ValidadorJogada:
         for casa_destino in self.__casas_secundarias:
             lin_dest = int((casa_destino - 1) / 5)
             col_dest = (casa_destino - 1) % 5
-            if self.verificar_se_vazia([lin_dest, col_dest]) and self.existe_cachorro(self.__jogada[2],
-                                                                                      [lin_dest, col_dest]):
+            if self.verificar_se_vazia([lin_dest, col_dest]) and self.existe_cachorro(self.__jogada[2],                                                                     [lin_dest, col_dest]):
                 return True
         return False
 
@@ -249,9 +248,17 @@ class ValidadorJogada:
     def vencedor(self):
         return self.__vencedor
 
+    @vencedor.setter
+    def vencedor(self, vencedor):
+        self.vencedor = vencedor
+
     @property
     def jogada_multipla(self):
         return self.__jogada_multipla
+
+    @jogada_multipla.setter
+    def jogada_multipla(self, jogada_multipla):
+        self.__jogada_multipla = jogada_multipla
 
     @property
     def jogada(self):
