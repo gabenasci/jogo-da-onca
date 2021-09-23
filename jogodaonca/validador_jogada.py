@@ -43,11 +43,11 @@ class ValidadorJogada:
                     existe_cachorro = self.existe_cachorro(self.__jogada[1], self.__jogada[2])
                     if existe_cachorro:
                         self.proximo_passo()
+                        self.validar_jogada()
                         self.cachorro_comido()
                         self.__cachorros_comidos += 1
                         self.__jogada_multipla = self.avaliar_sequencia_multipla()
                         self.validado()
-                        self.validar_jogada()
                         if self.__jogada[0] == TipoJogador.ONCA:
                             self.__casa_onca = self.__jogada[2]
                         return True
@@ -169,6 +169,7 @@ class ValidadorJogada:
         self.__onca_cercada = False
         print(self.__casas_primarias)
         print(self.__casas_secundarias)
+
         for primaria in self.__casas_primarias:
             lin_dest = int((primaria - 1) / 5)
             col_dest = (primaria - 1) % 5
@@ -180,6 +181,7 @@ class ValidadorJogada:
             if self.__tabuleiro.get_peca(lin_dest, col_dest).jogador.tipo.value == TipoJogador.VAZIA.value:
                 return self.__onca_cercada
         self.__onca_cercada = True
+
         return self.__onca_cercada
 
     def traz_vizinhos(self, casa):
@@ -250,7 +252,7 @@ class ValidadorJogada:
 
     @vencedor.setter
     def vencedor(self, vencedor):
-        self.vencedor = vencedor
+        self.__vencedor = vencedor
 
     @property
     def jogada_multipla(self):
