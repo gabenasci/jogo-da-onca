@@ -1,4 +1,4 @@
-from .ator_jogador import AtorJogador
+from .interface_jogador import InterfaceJogador
 from .peca import Peca
 from .estados import Estados
 from .jogador import Jogador
@@ -7,7 +7,7 @@ from .validador_jogada import ValidadorJogada
 
 class Jogo:
     def __init__(self):
-        self._interface = AtorJogador(self)
+        self._interface = InterfaceJogador(self)
         self._init()
 
     def _init(self):

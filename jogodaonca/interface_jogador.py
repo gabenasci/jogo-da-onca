@@ -5,7 +5,7 @@ from .constantes import PRETO, LINHAS, COLUNAS, TAMANHO_POSICAO, LARGURA, ALTURA
 from .tabuleiro import Tabuleiro
 from .tipo_jogador import TipoJogador
 
-class AtorJogador:
+class InterfaceJogador:
 
     def __init__(self, ref):
         from .jogo import Jogo
