@@ -9,12 +9,10 @@ class Jogo:
     def __init__(self):
         self._interface = AtorJogador(self)
         self._init()
-        #self.janela = janela
 
     def _init(self):
         self._peca_a_mover = None
         self._tabuleiro = self._interface.tabuleiro
-        #self._jogadores = [Jogador('Jogador 1', 'onca'), Jogador('Jogador 2', 'cachorro')]
         self._estado = Estados.ESPERA_ONCA
         self._validador = ValidadorJogada()
         self._partida_em_andamento = False
@@ -123,33 +121,6 @@ class Jogo:
                 self.mudar_estado(Estados.ESPERA_VAZIAO)
                 self.selecionar_peca(linha, coluna)
 
-
-
-        '''
-        if not self._peca_a_mover:
-            peca_clicada = self._tabuleiro.get_peca(linha, coluna)
-            if peca_clicada.jogador.tipo.value != 'vazia' and self._turno == peca_clicada.jogador.tipo.value:
-                self._peca_a_mover = peca_clicada
-                self._jogada = []
-                self.jogada.append(peca_clicada)
-                self.jogada.append([linha, coluna])
-            else:
-                self.mensagem("Turno errado")
-        else:
-            self._jogada.append([linha, coluna])
-            self._validador.verificar_jogada(self._jogada, self.tabuleiro, self._validador.cachorros_comidos)
-            print("Jogada Valida ",self._validador.jogada_valida)
-            print("cachorros comidos", self._validador.cachorros_comidos)
-            casa_vazia = self._mover(linha, coluna)
-            if self._validador.cachorro_foi_comido:
-                l, c = [abs(int((self._jogada[1][0] + self._jogada[2][0]) / 2)), abs(int((self._jogada[1][1] + self._jogada[2][1])/2))]
-                print(l, c)
-                self.tabuleiro.casas[l][c].jogador = Jogador('',TipoJogador.VAZIA)
-            if not casa_vazia:
-                self._peca_a_mover = None
-                self.selecionar_peca(linha, coluna)
-        '''
-
     def _mover(self, linha, coluna):
         posicao = self.tabuleiro.get_peca(linha, coluna)
         if self._peca_a_mover and posicao.jogador.tipo == TipoJogador.VAZIA and self._validador.jogada_valida is True:
@@ -219,9 +190,6 @@ class Jogo:
     @property
     def estado(self):
         return self._estado
-
-    def __repr__(self):
-        return str(self._jogadores)
 
     @property
     def interface(self):

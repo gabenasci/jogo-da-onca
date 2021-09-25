@@ -1,6 +1,5 @@
 
-from .constantes import TAMANHO_POSICAO, onca, cachorro
-from .jogador import Jogador
+from .constantes import TAMANHO_POSICAO
 
 class Peca():
 

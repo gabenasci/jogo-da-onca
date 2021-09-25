@@ -14,25 +14,10 @@ class Tabuleiro:
                 [Peca(5, 0,Jogador('', TipoJogador.VAZIA)), Peca(5, 1, Jogador('', TipoJogador.VAZIA)), Peca(5, 2,Jogador('', TipoJogador.VAZIA)), Peca(5, 3,Jogador('', TipoJogador.VAZIA)), Peca(5, 4,Jogador('', TipoJogador.VAZIA))],
                 [Peca(6, 0,Jogador('', TipoJogador.VAZIA)), Peca(6, 1, Jogador('', TipoJogador.VAZIA)), Peca(6, 2,Jogador('', TipoJogador.VAZIA)), Peca(6, 3,Jogador('', TipoJogador.VAZIA)), Peca(6, 4,Jogador('', TipoJogador.VAZIA))],
                 ]
-        self.jogadores = []
-        #self.peca_selecionada = None
-        self.cachorros = 14
-
-    @property
-    def casas(self):
-        return self._casas
-
-    @casas.setter
-    def casas(self, val):
-        self._casas = val
 
     def mover(self, peca, linha, coluna):
         self.casas[peca.linha][peca.coluna], self.casas[linha][coluna] = self.casas[linha][coluna], self.casas[peca.linha][peca.coluna]
         peca.mover(linha, coluna)
-    '''
-    def get_peca(self, linha, coluna):
-        return self.casas[linha][coluna]
-    '''
 
     def get_peca(self, lin, col):
         todas_casas = self.casas
@@ -52,3 +37,11 @@ class Tabuleiro:
                 self._casas[linha][coluna] = Peca(linha, coluna, jogador)
         jogador = Jogador('', TipoJogador.ONCA)
         self._casas[2][2] = Peca(2, 2, jogador)
+
+    @property
+    def casas(self):
+        return self._casas
+
+    @casas.setter
+    def casas(self, val):
+        self._casas = val

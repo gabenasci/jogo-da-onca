@@ -7,7 +7,7 @@ def main():
 
     jogo = Jogo()
 
-    # verificar se ocorreu evento
     jogo.interface.click()
+
 main()
 

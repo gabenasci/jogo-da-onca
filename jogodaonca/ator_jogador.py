@@ -2,24 +2,19 @@ import pygame
 
 from .constantes import PRETO, LINHAS, COLUNAS, TAMANHO_POSICAO, LARGURA, ALTURA, titulo, madeira, fundo, posicoes, \
     iniciar, finalizar, onca, cachorro, placar
-from .peca import Peca
 from .tabuleiro import Tabuleiro
 from .tipo_jogador import TipoJogador
-
-#JANELA = pygame.display.set_mode((LARGURA, ALTURA))
-#pygame.display.set_caption('Jogo da Onça')
 
 class AtorJogador:
 
     def __init__(self, ref):
-        self.tabuleiro = Tabuleiro()
         from .jogo import Jogo
         assert isinstance(ref, Jogo)
         self.jogo = ref
+        self.tabuleiro = Tabuleiro()
         self.posicionar_pecas()
         self.janela = pygame.display.set_mode((LARGURA, ALTURA))
         pygame.display.set_caption('Jogo da Onça')
-        self.mensagem = ""
 
     def click(self):
         jogo_em_execucao = True
@@ -31,6 +26,9 @@ class AtorJogador:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     jogo_em_execucao = False
+                    pygame.quit()
+                    exit()
+
 
                 # evento de click botao esquerdo do mouse
                 if event.type == pygame.MOUSEBUTTONDOWN:
@@ -96,19 +94,7 @@ class AtorJogador:
 
     def posicionar_pecas(self):
         self.tabuleiro.posicionar_pecas_inicio()
-        '''
-        for linha in range(LINHAS):
-            self.tabuleiro.casas.append([])
-            for coluna in range(COLUNAS):
-                if linha < 2:
-                    self.tabuleiro.casas[linha].append(Peca('cachorro'))
-                elif linha == 2 and coluna == 2:
-                    self.tabuleiro.casas[linha].append(Peca('onca'))
-                elif linha >= 2 and linha < 3 and coluna != 2:
-                    self.tabuleiro.casas[linha].append(Peca('cachorro'))
-                else:
-                    self.tabuleiro.casas[linha].append(0)
-        '''
+
     def desenhar_pecas(self):
         self.desenhar_tela()
         for linha in range(LINHAS):
